@@ -36,6 +36,8 @@ opKeys.forEach(key => key.addEventListener("click", operatorOn))
 document.querySelector(".equal").addEventListener("click", consolidate)
 document.querySelector(".backspace").addEventListener("click", backSpace)
 document.querySelector(".clear-all").addEventListener("click", clear)
+document.querySelector(".clear-entries").addEventListener("click", clear)
+document.querySelector(".reverse-sign").addEventListener("click", reverseSign)
 
 
 
@@ -80,19 +82,47 @@ function activateNumber(e){
     if (isNewSequence === false){        
         if (e.target.textContent === "." && Array.from(numHolder).includes(".") === true){
             return
+        }
+        if (e.target.textContent === "." && mainScreen.innerHTML === "0"){
+            numHolder = e.target.textContent;
+            mainScreen.innerHTML = "0."
         } else {
             numHolder += e.target.textContent;
-            let displayValue = numHolder.slice(1);
+            console.log(numHolder)
+            let displayValue = numHolder;
             if (displayValue.length >=10 && displayValue.length <13){
                 mainScreen.style.fontSize = "2.7rem";
                 mainScreen.style.marginBottom = 0;                                                                                                                             
-            } else if ( displayValue.length > 12) { return}
-            displayValue = parseFloat(displayValue)
-            currentOperandNum = displayValue
-            displayValue = displayValue.toLocaleString("en-US");
-            mainScreen.innerHTML = displayValue;
+            } else if ( displayValue.length > 12) return
+            let stringNum = displayValue.toString();           
+            let decimalDigit = stringNum.split(".")[1];
+            let integerDigit = parseFloat(stringNum.split(".")[0])
+            if (Array.from(displayValue)[Array.from(displayValue).length-1] === "."){
+                displayValue = parseFloat(displayValue)
+                currentOperandNum = displayValue
+                let formatNum = displayValue.toLocaleString("en-US")
+                mainScreen.innerHTML = `${formatNum}.`
+            } else{
+                displayValue = parseFloat(displayValue);
+                currentOperandNum = displayValue;
+                if (Number(displayValue) < 1) {
+                    if (decimalDigit === undefined){
+                        displayValue = `0`;                                 
+                    } else {
+                        displayValue = `0.${decimalDigit}`;
+                    }    
+                } else {
+                    if (decimalDigit === undefined){
+                        displayValue = `${integerDigit.toLocaleString("en-US")}`          
+                    } else {
+                        displayValue = `${integerDigit.toLocaleString("en-US")}.${decimalDigit}`;
+                    }
+                }
+                mainScreen.innerHTML = displayValue;
+            }
         }
-
+            
+        
     } else {
         numHolder = 0;
         numHolder += e.target.textContent;
@@ -116,7 +146,7 @@ function operatorOn(e){
         topScreen.innerHTML = `${operand} ${e.target.textContent}`;
         isNewSequence = false;
     } else {
-        const screenText = topScreen.innerHTML.split(" ");
+        let screenText = topScreen.innerHTML.split(" ");
         if (screenText.length !== 2){
             const operand =  mainScreen.innerHTML;
             let text = mainScreen.innerHTML;
@@ -159,7 +189,7 @@ function operatorOn(e){
 }
 
 function consolidate(){
-    const screenText = topScreen.innerHTML.split(" ");
+    let screenText = topScreen.innerHTML.split(" ");
     if (screenText.length !== 2) {
         return;
     } else {
@@ -186,7 +216,32 @@ function consolidate(){
         isNewSequence = true;    
     }
 
+}
+
+
+function reverseSign(){
+    if (mainScreen.innerHTML === 0 || mainScreen.innerHTML === "0") return
+    let screenText = topScreen.innerHTML.split(" ");
+    if (screenText.length > 2) {
+        currentOperandNum = mainScreen.innerHTML;
     }
+    currentOperandNum = currentOperandNum.toString()
+    console.log(currentOperandNum)
+    if (currentOperandNum.includes("-") === false){
+        currentOperandNum = Number(currentOperandNum);
+        currentOperandNum = -(currentOperandNum);
+        displayValue = currentOperandNum.toLocaleString("en-US");
+        mainScreen.innerHTML = displayValue;
+    } else {
+        currentOperandNum = Number(currentOperandNum);
+        currentOperandNum = -(currentOperandNum);
+        displayValue = currentOperandNum.toLocaleString("en-US");
+        mainScreen.innerHTML = displayValue;
+    }
+    isNewSequence = false;
+    // console.log(currentOperandNum)
+    
+}
 
 
-    window.onload = () => mainScreen.innerHTML = defaultValue;
+window.onload = () => mainScreen.innerHTML = defaultValue;

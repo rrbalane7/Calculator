@@ -13,7 +13,12 @@ function multiplication(a,b){
 }
 
 function division(a,b){
-    return a / b;
+    if (b === 0){
+        return "Undefined"      
+    } else {
+        return a / b;
+    }
+    
 }
 
 
@@ -22,6 +27,8 @@ const numKeys = document.querySelectorAll(".numbers")
 const mainScreen = document.querySelector(".main-screen")
 const topScreen = document.querySelector(".top-screen")
 const opKeys = document.querySelectorAll(".operators")
+const popWindow = document.querySelector("#pop-up-window")
+const calcFace = document.querySelector("#main-cont")
 const defaultValue = 0;
 let isNewSequence = false;  //Bolean will change to true when equal sign(=) is clicked/pressed, This resets to a new Entry for the user
 let numHolder = defaultValue;
@@ -38,6 +45,19 @@ document.querySelector(".backspace").addEventListener("click", backSpace)
 document.querySelector(".clear-all").addEventListener("click", clear)
 document.querySelector(".clear-entries").addEventListener("click", clear)
 document.querySelector(".reverse-sign").addEventListener("click", reverseSign)
+document.querySelector("#past-entries").addEventListener("click", popUpEntries)
+
+
+function popUpEntries(){
+    if (popWindow.style.display === ""){
+        popWindow.style.display = "block";
+        popWindow.style.transform = "translateX(27%)"
+        calcFace.style.opacity = "0.7"
+    } else {
+        popWindow.style.display = "";
+        calcFace.style.opacity = "1"
+    }
+}
 
 
 
@@ -46,26 +66,39 @@ function backSpace() {
         mainScreen.innerHTML = "0";
     } else {
         let displayValue = mainScreen.innerHTML;
-        // let n = 3;
-        if (displayValue.length > 3) {
-            const i = Math.floor((displayValue.length/3))
-            for (let x=0; x < i; x++){
-                displayValue = displayValue.replace(",","");              
-            } 
-            displayValue = Array.from(displayValue);                            
-            displayValue.pop();
-        } else {
+        if (displayValue.includes("0.") === true){
             displayValue = Array.from(displayValue);
-            displayValue.pop();
-        }        
-        if (displayValue.length === 0){
-            mainScreen.innerHTML = "0";
-        } else{ 
-            currentOperandNum = parseFloat(displayValue.join(""));
-            mainScreen.innerHTML = parseFloat(displayValue.join("")).toLocaleString("en-US");
+            displayValue.pop();       
+            if (displayValue.length === 0){
+                mainScreen.innerHTML = "0";
+            } else{ 
+                currentOperandNum = parseFloat(displayValue.join(""));
+                mainScreen.innerHTML = (displayValue.join(""));
+            }
+            displayValue.unshift("0");
+            numHolder = displayValue.join("");
+
+        }else {
+            if (displayValue.length > 3) {
+                const i = Math.floor((displayValue.length/3))
+                for (let x=0; x < i; x++){
+                    displayValue = displayValue.replace(",","");              
+                } 
+                displayValue = Array.from(displayValue);                            
+                displayValue.pop();
+            } else {
+                displayValue = Array.from(displayValue);
+                displayValue.pop();
+            }        
+            if (displayValue.length === 0){
+                mainScreen.innerHTML = "0";
+            } else{ 
+                currentOperandNum = parseFloat(displayValue.join(""));
+                mainScreen.innerHTML = parseFloat(displayValue.join("")).toLocaleString("en-US");
+            }
+            displayValue.unshift("0");
+            numHolder = displayValue.join("");
         }
-        displayValue.unshift("0");
-        numHolder = displayValue.join("");
     }
 }
 
@@ -225,13 +258,12 @@ function reverseSign(){
     if (screenText.length > 2) {
         currentOperandNum = mainScreen.innerHTML;
     }
-    currentOperandNum = currentOperandNum.toString()
-    console.log(currentOperandNum)
-    if (currentOperandNum.includes("-") === false){
+    currentOperandNum = currentOperandNum.toString()   
+    if (currentOperandNum.includes("0.") === true){
         currentOperandNum = Number(currentOperandNum);
         currentOperandNum = -(currentOperandNum);
-        displayValue = currentOperandNum.toLocaleString("en-US");
-        mainScreen.innerHTML = displayValue;
+        displayValue = currentOperandNum;
+        mainScreen.innerHTML = displayValue;        
     } else {
         currentOperandNum = Number(currentOperandNum);
         currentOperandNum = -(currentOperandNum);
@@ -239,7 +271,7 @@ function reverseSign(){
         mainScreen.innerHTML = displayValue;
     }
     isNewSequence = false;
-    // console.log(currentOperandNum)
+
     
 }
 

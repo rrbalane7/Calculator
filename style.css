@@ -105,19 +105,32 @@ body{
     border: 1px solid gray;
 }
 
+#pop-up-cont{
+    position: absolute;
+    width:0;
+    height: 0;
+    top:195px;
+    left:0;
+
+}
+
+
 #pop-up-window{
     display: none;
     flex-direction: column;
-    width: 360px;
+    width: 362px;
     height: 430px;
-    position: absolute;
+    position: relative;
     /* border: 1px solid magenta; */
-    top:195px;
-    left:195px;
+    /* top:0px; */
+    left:0%;
     padding:1em;
-    transition: all 1s ease-in;
-    transform: translateX(29%);
-    background-color: rgb(161, 163, 164);
+    transition: transform 1s ease-in;
+    /* transform: translateX(98%); */
+    background-color: rgb(130, 132, 154);
+    /* background-color: rgb(146, 159, 187); */
+    /* color:black; */
+    color:rgb(130, 132, 154);
 }
 
 .entries{

@@ -51,11 +51,21 @@ document.querySelector("#past-entries").addEventListener("click", popUpEntries)
 function popUpEntries(){
     if (popWindow.style.display === ""){
         popWindow.style.display = "block";
-        popWindow.style.transform = "translateX(27%)"
+        popWindow.style.transform = "translateX(99%)"
+        popWindow.style.backgroundColor = "rgb(146, 159, 187)"   //light blue
+        popWindow.style.color = "black"
         calcFace.style.opacity = "0.7"
+        const popCont = document.querySelector("#pop-up-cont");
+        popCont.style.width = "720px";
+        popCont.style.height = "430px";
+        popCont.style.left = "420px";
     } else {
         popWindow.style.display = "";
-        calcFace.style.opacity = "1"
+        calcFace.style.opacity = "1";
+        const popCont = document.querySelector("#pop-up-cont");
+        popCont.style.width = "0";
+        popCont.style.height = "0";
+        popCont.style.left = "0";
     }
 }
 

@@ -53,6 +53,147 @@ document.querySelector(".clear-entries").addEventListener("click", clearPastEntr
 document.querySelector(".reverse-sign").addEventListener("click", reverseSign)
 document.querySelector("#past-entries").addEventListener("click", popUpEntries)
 
+window.addEventListener("keydown", pressBackSpace)
+window.addEventListener("keydown", pressNumbers)
+window.addEventListener("keydown", pressOperators)
+window.addEventListener("keydown", pressEqual)
+
+function pressBackSpace(e){   
+    const bSpace = document.querySelector(".backspace");
+    if (bSpace.getAttribute("data-key") === `${e.keyCode}`){
+        backSpace();
+    } else return
+}
+
+
+function pressNumbers(e){
+    const numPad = document.querySelector(`.numbers[data-key="${e.keyCode}"]`)
+    if (!numPad) return
+    if (numPad.textContent === `${e.key}`){
+        if (isNewSequence === false){        
+            if (numPad.textContent === "." && Array.from(numHolder).includes(".") === true){
+                return
+            }
+            if (numPad.textContent === "." && mainScreen.innerHTML === "0"){
+                numHolder = numPad.textContent;
+                mainScreen.innerHTML = "0."
+            } else {
+                numHolder += numPad.textContent;
+                // console.log(numHolder)
+                let displayValue = numHolder;
+                if (displayValue.length >=10 && displayValue.length <13){
+                    mainScreen.style.fontSize = "2.7rem";
+                    mainScreen.style.marginBottom = 0;                                                                                                                             
+                } else if ( displayValue.length > 12) return
+                let stringNum = displayValue.toString();           
+                let decimalDigit = stringNum.split(".")[1];
+                let integerDigit = parseFloat(stringNum.split(".")[0])
+                if (Array.from(displayValue)[Array.from(displayValue).length-1] === "."){
+                    displayValue = parseFloat(displayValue)
+                    currentOperandNum = displayValue
+                    let formatNum = displayValue.toLocaleString("en-US")
+                    mainScreen.innerHTML = `${formatNum}.`
+                } else{
+                    displayValue = parseFloat(displayValue);
+                    currentOperandNum = displayValue;
+                    if (Number(displayValue) < 1) {
+                        if (decimalDigit === undefined){
+                            displayValue = `0`;                                 
+                        } else {
+                            displayValue = `0.${decimalDigit}`;
+                        }    
+                    } else {
+                        if (decimalDigit === undefined){
+                            displayValue = `${integerDigit.toLocaleString("en-US")}`          
+                        } else {
+                            displayValue = `${integerDigit.toLocaleString("en-US")}.${decimalDigit}`;
+                        }
+                    }
+                    mainScreen.innerHTML = displayValue;
+                }
+            }
+                            
+        } else {
+            numHolder = 0;
+            numHolder += numPad.textContent;
+            let displayValue = numHolder.slice(1);
+            mainScreen.innerHTML = displayValue;
+            topScreen.innerHTML = ""; 
+            isNewSequence = false;
+        }       
+       
+    } else return;
+}
+
+function pressOperators(e){
+    const operator = document.querySelector(`.operators[data-key="${e.keyCode}"]`)
+    if (!operator) return
+    if (operator.getAttribute("data-key") === `${e.keyCode}`){
+        if (topScreen.innerHTML === ""){
+            const operand =  mainScreen.innerHTML;
+            let text = mainScreen.innerHTML;
+            const i = Math.floor((operand.length/3))
+            for (let x=0; x < i; x++){
+                text = text.replace(",","");              
+            }
+            prevOperandNum = parseFloat(text); 
+            numHolder = 0;
+            topScreen.innerHTML = `${operand} ${operator.textContent}`;
+            isNewSequence = false;
+        } else {
+            let screenText = topScreen.innerHTML.split(" ");
+            if (screenText.length !== 2){
+                const operand =  mainScreen.innerHTML;
+                let text = mainScreen.innerHTML;
+                const i = Math.floor((operand.length/3))
+                for (let x=0; x < i; x++){
+                    text = text.replace(",","");              
+                }
+                prevOperandNum = parseFloat(text);           
+                numHolder = 0;
+                topScreen.innerHTML = `${operand} ${operator.textContent}`;
+                isNewSequence = false;
+    
+            } else{
+                const operand1 = parseFloat(prevOperandNum);
+                const operand2 = parseFloat(currentOperandNum);
+                let result;
+                switch (screenText[1]) {
+                    case "+":
+                        result = addition(operand1,operand2)
+                        break;
+                    case "–":
+                        result = subtraction(operand1,operand2)
+                        break;
+                    case "x":
+                        result = multiplication(operand1,operand2);
+                        break;
+                    default:
+                        result = division(operand1,operand2)
+                };
+                numHolder = 0;
+                prevOperandNum = result
+                result = result.toLocaleString("en-US")
+                mainScreen.innerHTML = `${result}`;
+                topScreen.innerHTML = `${result} ${operator.textContent}`;
+                isNewSequence = false; 
+    
+            }
+    
+        } 
+
+    }
+
+}
+
+function pressEqual(e){
+    const equal = document.querySelector(".equal")
+    if (!equal) return
+    if (equal.getAttribute("data-key") === `${e.keyCode}`){
+        consolidate();
+    }
+
+}
 
 function clearPastEntries(){
     entry.forEach( ent =>  ent.textContent = "" );
@@ -62,7 +203,7 @@ function clearPastEntries(){
 
 function popUpEntries(){
     if (popWindow.style.display === ""){
-        popWindow.style.display = "block";
+        popWindow.style.display = "flex";
         popWindow.style.backgroundColor = "rgb(146, 159, 187)"   //light blue
         popWindow.style.color = "black"
         calcFace.style.opacity = "0.7"
@@ -102,7 +243,10 @@ function backSpace() {
             } else {
                 displayValue = Array.from(displayValue);
                 displayValue.pop();
-            }        
+            }
+            if (displayValue.length < 10){
+                mainScreen.style.fontSize = "3.5rem";
+            }         
             if (displayValue.length === 0){
                 mainScreen.innerHTML = "0";
             } else{ 
@@ -134,7 +278,7 @@ function activateNumber(e){
             mainScreen.innerHTML = "0."
         } else {
             numHolder += e.target.textContent;
-            console.log(numHolder)
+            // console.log(numHolder)
             let displayValue = numHolder;
             if (displayValue.length >=10 && displayValue.length <13){
                 mainScreen.style.fontSize = "2.7rem";
@@ -256,7 +400,7 @@ function consolidate(){
                 result = division(operand1,operand2)
         };
         result = result.toLocaleString("en-US")
-        console.log(operand1,operand2);
+        // console.log(operand1,operand2);
         topScreen.innerHTML = `${screenText[0]} ${screenText[1]} ${mainScreen.innerHTML}`;
         mainScreen.innerHTML = `${result}`;      
         isNewSequence = true; 

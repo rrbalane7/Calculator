@@ -11,7 +11,6 @@ body{
     display:flex;
     width:360px;
     height: 600px;
-    /* border: 1px solid #000; */
     border-radius: 5px;
     margin: 5em auto;
     flex-direction: column;
@@ -100,18 +99,8 @@ body{
 
 #past-entries:hover{
     background-color: rgb(195, 199, 202);
-    /* transform: scale(1.05); */
     cursor: default;
     border: 1px solid gray;
-}
-
-#pop-up-cont{
-    position: absolute;
-    width:0;
-    height: 0;
-    top:195px;
-    left:0;
-
 }
 
 
@@ -120,22 +109,18 @@ body{
     flex-direction: column;
     width: 362px;
     height: 430px;
-    position: relative;
+    position: absolute;
     /* border: 1px solid magenta; */
-    /* top:0px; */
-    left:0%;
+    top:200px;
     padding:1em;
-    transition: transform 1s ease-in;
-    /* transform: translateX(98%); */
-    background-color: rgb(130, 132, 154);
-    /* background-color: rgb(146, 159, 187); */
-    /* color:black; */
-    color:rgb(130, 132, 154);
+    background-color: rgb(146, 159, 187);
+    color:black;
 }
 
 .entries{
-    height: 40px;
+    height: max-content;
+    width: max-content;
     font-size: 1.5rem;
     /* border: 1px solid magenta; */
-    margin-bottom: 1.5em;
+    margin-bottom: 1.3em;
 }

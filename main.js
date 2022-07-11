@@ -29,6 +29,12 @@ const topScreen = document.querySelector(".top-screen")
 const opKeys = document.querySelectorAll(".operators")
 const popWindow = document.querySelector("#pop-up-window")
 const calcFace = document.querySelector("#main-cont")
+const entryOne = document.querySelector(".entry-one")
+const entryTwo = document.querySelector(".entry-two")
+const entryThree = document.querySelector(".entry-three")
+const entryFour = document.querySelector(".entry-four")
+const entryFive = document.querySelector(".entry-five")
+const entry = document.querySelectorAll(".entry")
 const defaultValue = 0;
 let isNewSequence = false;  //Bolean will change to true when equal sign(=) is clicked/pressed, This resets to a new Entry for the user
 let numHolder = defaultValue;
@@ -43,29 +49,26 @@ opKeys.forEach(key => key.addEventListener("click", operatorOn))
 document.querySelector(".equal").addEventListener("click", consolidate)
 document.querySelector(".backspace").addEventListener("click", backSpace)
 document.querySelector(".clear-all").addEventListener("click", clear)
-document.querySelector(".clear-entries").addEventListener("click", clear)
+document.querySelector(".clear-entries").addEventListener("click", clearPastEntries)
 document.querySelector(".reverse-sign").addEventListener("click", reverseSign)
 document.querySelector("#past-entries").addEventListener("click", popUpEntries)
 
 
+function clearPastEntries(){
+    entry.forEach( ent =>  ent.textContent = "" );
+    clear();
+    document.querySelector(".head").textContent = "There is no history yet";
+}
+
 function popUpEntries(){
     if (popWindow.style.display === ""){
         popWindow.style.display = "block";
-        popWindow.style.transform = "translateX(99%)"
         popWindow.style.backgroundColor = "rgb(146, 159, 187)"   //light blue
         popWindow.style.color = "black"
         calcFace.style.opacity = "0.7"
-        const popCont = document.querySelector("#pop-up-cont");
-        popCont.style.width = "720px";
-        popCont.style.height = "430px";
-        popCont.style.left = "420px";
     } else {
         popWindow.style.display = "";
         calcFace.style.opacity = "1";
-        const popCont = document.querySelector("#pop-up-cont");
-        popCont.style.width = "0";
-        popCont.style.height = "0";
-        popCont.style.left = "0";
     }
 }
 
@@ -256,9 +259,40 @@ function consolidate(){
         console.log(operand1,operand2);
         topScreen.innerHTML = `${screenText[0]} ${screenText[1]} ${mainScreen.innerHTML}`;
         mainScreen.innerHTML = `${result}`;      
-        isNewSequence = true;    
+        isNewSequence = true; 
+        if (entryOne.textContent !== "" ){
+            if(entryTwo.textContent !== ""){
+                if(entryThree.textContent !== ""){
+                    if(entryFour.textContent !== ""){
+                        document.querySelector(".head").textContent = "";
+                        entryFive.textContent = entryFour.textContent;
+                        entryFour.textContent = entryThree.textContent;
+                        entryThree.textContent = entryTwo.textContent;
+                        entryTwo.textContent = entryOne.textContent;
+                        entryOne.textContent = `${screenText[0]} ${screenText[1]} ${currentOperandNum.toLocaleString("en-US")} = ${result}`;
+                    } else {
+                        document.querySelector(".head").textContent = "";
+                        entryFour.textContent = entryThree.textContent;
+                        entryThree.textContent = entryTwo.textContent;
+                        entryTwo.textContent = entryOne.textContent;
+                        entryOne.textContent = `${screenText[0]} ${screenText[1]} ${currentOperandNum.toLocaleString("en-US")} = ${result}`;
+                    }
+                }  else {
+                    document.querySelector(".head").textContent = "";
+                    entryThree.textContent = entryTwo.textContent;
+                    entryTwo.textContent = entryOne.textContent;
+                    entryOne.textContent = `${screenText[0]} ${screenText[1]} ${currentOperandNum.toLocaleString("en-US")} = ${result}`;
+                }              
+            } else {      
+                document.querySelector(".head").textContent = "";      
+                entryTwo.textContent = entryOne.textContent;
+                entryOne.textContent = `${screenText[0]} ${screenText[1]} ${currentOperandNum.toLocaleString("en-US")} = ${result}`;                            
+            }              
+        } else {
+            document.querySelector(".head").textContent = "";
+            entryOne.textContent = `${screenText[0]} ${screenText[1]} ${currentOperandNum.toLocaleString("en-US")} = ${result}`           
+        }
     }
-
 }
 
 
@@ -281,7 +315,6 @@ function reverseSign(){
         mainScreen.innerHTML = displayValue;
     }
     isNewSequence = false;
-
     
 }
 
